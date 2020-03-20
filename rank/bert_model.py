@@ -91,7 +91,7 @@ def get_model():
 
     input = Lambda(lambda x: x[:, 0])(input)
 
-    output = Dense(4, activation='softmax')(input)
+    output = Dense(2, activation='softmax')(input)
 
     model = Model([input1, input2], output)
     model.compile(
