@@ -15,7 +15,7 @@ test = pd.read_csv('data/test_recall.csv')
 question = train['question'].values
 text = train['text'].values
 
-labels = train['label'].astype(int).values - 1
+labels = train['label'].astype(int).values-1
 labels_cat = to_categorical(labels)
 labels_cat = labels_cat.astype(np.int32)
 
@@ -93,7 +93,7 @@ def predict(data):
 #######################################开始训练#######################################
 oof_train = np.zeros((len(train), 2), dtype=np.float32)
 oof_test = np.zeros((len(test), 2), dtype=np.float32)
-skf = StratifiedKFold(n_splits=6, shuffle=True, random_state=42)
+skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 for fold, (train_index, valid_index) in enumerate(skf.split(question, labels)):
     logger.info('================     fold {}        ==============='.format(fold))
     x1 = question[train_index]
