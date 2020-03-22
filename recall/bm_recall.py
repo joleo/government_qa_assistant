@@ -114,9 +114,6 @@ def get_candidate_set_res(df,num):
     res.to_csv('data/query_docids_v1.csv', index=0, header=0, sep='\t')
     return res
 
-
-# test_res = get_candidate_set_res(valid_data,10)
-# trn_res = get_candidate_set_res(train_data,10)
 def get_recall_res(df,paper_data, num=10):
     test_res = get_candidate_set2(df, num)
     test = test_res.merge(df[['id', 'question']],how='left',on='id')[['id','question','docid']]
@@ -125,20 +122,20 @@ def get_recall_res(df,paper_data, num=10):
     # test.to_csv('data/recall/test_recall.csv', index=0)
     return test
 
-test_recall_res = get_candidate_set2(valid_data, 20)
-test_recall_res.to_csv('data/recall/test_recall.csv', index=0)
+if __name__ == '__main__':
+    test_recall_res = get_candidate_set2(valid_data, 20)
+    test_recall_res.to_csv('data/recall/test_recall.csv', index=0)
 
-trn_recall_res = get_candidate_set2(train_data, 20)
-label = trn_recall_res.merge(train_data,how='left',on='id')
-label['label'] = list(map(lambda x,y: 1 if x==y else 0, label['docid_x'],label['docid_y']))
-label.rename(columns={'docid_x':'docid'}, inplace=True)
-label = label.merge(paper_data,how='left',on='docid')[['id','question','text','label']]
+    trn_recall_res = get_candidate_set2(train_data, 20)
+    label = trn_recall_res.merge(train_data,how='left',on='id')
+    label['label'] = list(map(lambda x,y: 1 if x==y else 0, label['docid_x'],label['docid_y']))
+    label.rename(columns={'docid_x':'docid'}, inplace=True)
+    label = label.merge(paper_data,how='left',on='docid')[['id','question','text','label']]
+    tmp = train_data.merge(paper_data,how='left',on='docid')[['id', 'question', 'text']]
+    tmp['label'] = 1
+    train_recall_res = pd.concat([label, tmp]).drop_duplicates(subset=['id', 'question', 'text','label']).reset_index(drop=True)
 
-tmp = train_data.merge(paper_data,how='left',on='docid')[['id', 'question', 'text']]
-tmp['label'] = 1
-train_recall_res = pd.concat([label, tmp]).drop_duplicates(subset=['id', 'question', 'text','label']).reset_index(drop=True)
-
-label[label['docid_x'] == label['docid_y']].shape[0] / train_data['docid'].shape[0]
-train_recall_res.to_csv('data/recall/train_recall.csv', index=0)
+    # label[label['docid_x'] == label['docid_y']].shape[0] / train_data['docid'].shape[0]
+    train_recall_res.to_csv('data/recall/train_recall.csv', index=0)
 
 #########################################################################
